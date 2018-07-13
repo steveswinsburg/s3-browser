@@ -1,0 +1,8 @@
+{
+    "s3": {
+        "bucket": "hasnorthkoreafiredamissiletoday.com",
+        "region": "us-east-2"
+    },
+    "ignore_files": ["config.json", "index.html"],
+    "title": "Title goes here"
+}
