@@ -34,6 +34,7 @@
 
   </div>
 
+  <div id="debug"></div>
 
 
 
@@ -65,7 +66,12 @@
 
     function getS3Data() {
 
+      var restUrl = _restUrl();
+      var siteUrl = _siteUrl();
 
+      $('div#container').html(
+        restUrl + '<br />' + siteUrl
+      )
 
     }
 
@@ -77,13 +83,13 @@
 
     function _restUrl() {
       // http://hasnorthkoreafiredamissiletoday.com.s3.us-east-2.amazonaws.com
-      return 'http://'+config.bucket+'.s3.'+config.region+'.amazonaws.com';
+      return 'http://'+_this.config.s3.bucket+'.s3.'+_this.config.s3.region+'.amazonaws.com';
     }
 
     function _siteUrl() {
 
       // http://hasnorthkoreafiredamissiletoday.com.s3-website.us-east-2.amazonaws.com
-      return 'http://'+config.bucket+'.s3-website.'+config.region+'.amazonaws.com';
+      return 'http://'+_this.config.s3.bucket+'.s3-website.'+_this.config.s3.region+'.amazonaws.com';
     }
   </script>
 
