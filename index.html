@@ -35,18 +35,29 @@
 
   <script>
     var _config;
+    var items = [];
+    /*
+    var item = {
+      title:"string",
+      date:"date string"
+      size:"int",
+      isDirectory: "boolean"
+    };
+    */
+
 
 
     $(document).ready(function () {
 
-      showThrobber();
+      toggleThrobber(true);
 
       $.ajax({
         url: "config.json",
         dataType: "json",
         success: function (config) {
-          processConfig(config);
-          getS3Data();
+          _config = config;
+          setTitle();
+          renderData();
         }
       });
 
@@ -57,18 +68,19 @@
 
     });
 
-    function processConfig(config) {
-      _config = config;
-      
-      setTitle(_config.title);
-      
+    
+
+    function isDirectory(str){
+      return str.endsWith('/');
+    }
+
+    function renderItem(title, lastModified, size) {
 
 
     }
-
     
     
-    function getS3Data() {
+    function renderData() {
 
       $.ajax({
         url: _restUrl(),
@@ -76,27 +88,40 @@
         success: function (xml) {
 
           $(xml).find('Contents').each(function() {
-            var item  = $(this),
-                title = item.find('Key').text(),
-                lastModified = item.find('LastModified').text(),
-                size = item.find('Size').text();
-                console.log(title+' '+lastModified+' '+size);
+
+            var element  = $(this);
+            var title = element.find('Key').text();
+
+            var item = {
+              title: title,
+              date: element.find('LastModified').text(),
+              size: element.find('Size').text(),
+              isDirectory: isDirectory(title)
+            }
+            items.push(item);
+   
+            console.log(item);
           });
+
+          toggleThrobber(false);
+
 
 
         }
       });
     }
 
-    function setTitle(title) {
-      $('h1#title').html(title);
-      document.title = title;
+    function setTitle() {
+      $('h1#title').html(_config.title);
+      document.title = _config.title;
     }
 
-    function showThrobber() {
-      $('div#container').html(
-        `<i class="fas fa-spinner fa-spin fa-3x"></i>`
-      )
+    function toggleThrobber(show) {
+      if(show){
+        $('div#container').html(`<i class="fas fa-spinner fa-spin fa-3x"></i>`)
+      } else {
+        $('div#container').html('');
+      }
     }
 
     function _restUrl() {
