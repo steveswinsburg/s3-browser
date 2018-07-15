@@ -22,25 +22,19 @@
     crossorigin="anonymous"></script>
 
 
-  <title>s3-browser</title>
+  <title><!-- [config.title] --></title>
 
 </head>
 
 <body>
 
-  <h1>.</h1>
+  <h1 id="title"><!-- [config.title] --></h1>
 
-  <div id="container">
-
-  </div>
-
-  <div id="debug"></div>
-
+  <div id="container"></div>
 
 
   <script>
-    var config;
-    var _this = this;
+    var _config;
 
 
     $(document).ready(function () {
@@ -50,10 +44,9 @@
       $.ajax({
         url: "config.json",
         dataType: "json",
-        success: function (result) {
-          _this.config = result;
+        success: function (config) {
+          processConfig(config);
           getS3Data();
-          
         }
       });
 
@@ -64,15 +57,40 @@
 
     });
 
+    function processConfig(config) {
+      _config = config;
+      
+      setTitle(_config.title);
+      
+
+
+    }
+
+    
+    
     function getS3Data() {
 
-      var restUrl = _restUrl();
-      var siteUrl = _siteUrl();
+      $.ajax({
+        url: _restUrl(),
+        dataType: "xml",
+        success: function (xml) {
 
-      $('div#container').html(
-        restUrl + '<br />' + siteUrl
-      )
+          $(xml).find('Contents').each(function() {
+            var item  = $(this),
+                title = item.find('Key').text(),
+                lastModified = item.find('LastModified').text(),
+                size = item.find('Size').text();
+                console.log(title+' '+lastModified+' '+size);
+          });
 
+
+        }
+      });
+    }
+
+    function setTitle(title) {
+      $('h1#title').html(title);
+      document.title = title;
     }
 
     function showThrobber() {
@@ -83,14 +101,15 @@
 
     function _restUrl() {
       // http://hasnorthkoreafiredamissiletoday.com.s3.us-east-2.amazonaws.com
-      return 'http://'+_this.config.s3.bucket+'.s3.'+_this.config.s3.region+'.amazonaws.com';
+      return 'http://'+_config.s3.bucket+'.s3.'+_config.s3.region+'.amazonaws.com';
     }
 
     function _siteUrl() {
 
       // http://hasnorthkoreafiredamissiletoday.com.s3-website.us-east-2.amazonaws.com
-      return 'http://'+_this.config.s3.bucket+'.s3-website.'+_this.config.s3.region+'.amazonaws.com';
+      return 'http://'+_config.s3.bucket+'.s3-website.'+_config.s3.region+'.amazonaws.com';
     }
+
   </script>
 
 
