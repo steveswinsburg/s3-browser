@@ -35,7 +35,7 @@
 
   <script>
     var _config;
-    var items = [];
+    var _items = [];
     /*
     var item = {
       title:"string",
@@ -49,15 +49,14 @@
 
     $(document).ready(function () {
 
-      toggleThrobber(true);
-
       $.ajax({
         url: "config.json",
+        async: false,
         dataType: "json",
         success: function (config) {
           _config = config;
           setTitle();
-          renderData();
+          render();
         }
       });
 
@@ -74,16 +73,13 @@
       return str.endsWith('/');
     }
 
-    function renderItem(title, lastModified, size) {
-
-
-    }
     
     
-    function renderData() {
-
+    function getData() {
+     
       $.ajax({
         url: _restUrl(),
+        async: false,
         dataType: "xml",
         success: function (xml) {
 
@@ -98,17 +94,34 @@
               size: element.find('Size').text(),
               isDirectory: isDirectory(title)
             }
-            items.push(item);
-   
-            console.log(item);
+            _items.push(item);
           });
-
-          toggleThrobber(false);
-
-
-
         }
       });
+    }
+    
+    function render() {
+      
+      toggleThrobber(true);
+
+      getData();
+
+      renderItems();
+
+      toggleThrobber(false);
+      
+    }
+
+    function renderItems() {
+      _items.forEach(function(entry) {
+        console.log(entry);
+      });
+
+    } 
+
+    function renderItem(item) {
+
+
     }
 
     function setTitle() {
