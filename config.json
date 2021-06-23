@@ -1,6 +1,6 @@
 {
     "s3": {
-        "bucket": "hasnorthkoreafiredamissiletoday.com",
+        "bucket": "bucketeer-b51e6d46-c163-43b0-99a8-fcf00ffa89ef",
         "region": "us-east-2"
     },
     "ignore_files": ["config.json", "index.html"],
